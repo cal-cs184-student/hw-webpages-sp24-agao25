@@ -40,25 +40,22 @@
 <body>
 
 <h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2024</h1>
-<h1 align="middle">Project 2: Mesh Edit</h1>
+<h1 align="middle">Homework 2: Mesh Edit</h1>
 <h2 align="middle">Grace Liu and Alex Gao</h2>
 <h2 align="middle"><a href="https://cal-cs184-student.github.io/hw-webpages-sp24-agao25/">Homework Submission Webpage: https://cal-cs184-student.github.io/hw-webpages-sp24-agao25/</a></h2>
 
 <br><br>
-
 <div>
 
 <h2 align="middle">Overview</h2>
 <p>
-    YOUR RESPONSE GOES HERE - high level overview on what was implemeneted, what interesting things you have learned from completing this assignment
+    In this homework, we implemented various geometric models to create meshes of 2D curves and 3D objects. This involved the manipulation of interpolation functions/algorithms, triangle meshes and the halfedge data structure, and various functions to smooth or transform the displayed model. The halfedge data structure is really interesting in how it can allow us to traverse through an entire mesh with only a few pointers, but a lot of reassignments. It's also pretty cool to compare how we can manually manipulate the mesh to try to improve the mesh versus using an algorithm to subdivide.
 </p>
 <br>
-
 
 <h2 align="middle">Section I: Bezier Curves and Surfaces</h2>
 
 <h3 align="middle">Part 1: Bezier Curves with 1D de Casteljau Subdivision</h3>
-
 
 <b>
   Briefly explain de Casteljau's algorithm and how you implemented it in order to evaluate Bezier curves.
@@ -74,8 +71,8 @@
 
 <!-- Example of including a single figure -->
 <div align="middle">
-    <img src="../results/Task1_1.png" align="middle" width="50%">
-    <figcaption>Own Bezier curve with 6 control points</figcaption>
+    <img src="results/Part1/Part1_BezierCurve.png" align="middle" width="50%">
+    <figcaption>Our Bezier curve with 6 control points (final curve shown here)</figcaption>
 </div>
 <br>
 
@@ -87,33 +84,33 @@
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="results/Part1/Part1_level0.png" align="middle" width="400px"/>
         <figcaption>Level 0</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="results/Part1/Part1_level1.png" align="middle" width="400px"/>
         <figcaption>Level 1</figcaption>
       </td>
     </tr>
     <br>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="results/Part1/Part1_level2.png" align="middle" width="400px"/>
         <figcaption>Level 2</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="results/Part1/Part1_level3.png" align="middle" width="400px"/>
         <figcaption>Level 3</figcaption>
       </td>
     </tr>
     <br>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="results/Part1/Part1_level4.png" align="middle" width="400px"/>
         <figcaption>Level 4</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="results/Part1/Part1_level5.png" align="middle" width="400px"/>
         <figcaption>Level 5</figcaption>
       </td>
     </tr>
@@ -125,7 +122,7 @@
   Show a screenshot of a slightly different Bezier curve by moving the original control points around and modifying the parameter \(t\) via mouse scrolling.
 </b>
 <div align="middle">
-  <img src="../results/Part1/Part1_BezierCurveNewPointsDiffT.png" align="middle" width="50%">
+  <img src="results/Part1/Part1_BezierCurveNewPointsDiffT.png" align="middle" width="50%">
 </div>
 
 <br>
@@ -144,11 +141,12 @@
 <b>
   Show a screenshot of bez/teapot.bez (not .dae) evaluated by your implementation.
 </b>
-<div align="middle">
-  <img src="../results/Part2/Part2.png" align="middle" width="50%">
-</div>
 <br>
 
+<div align="middle">
+  <img src="results/Part2/Part2.png" align="middle" width="50%">
+</div>
+<br>
 
 <h2 align="middle">Section II: Triangle Meshes and Half-Edge Data Structure</h2>
 
@@ -170,12 +168,12 @@
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="../results/Part3/Part3_flatShading.png" align="middle" width="400px"/>
-        <figcaption>Teapot shading with vertex normals</figcaption>
+        <img src="results/Part3/Part3_flatShading.png" align="middle" width="400px"/>
+        <figcaption>Teapot shading without vertex normals</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>Teapot shading without vertex normals</figcaption>
+        <img src="results/Part3/Part3_PhongShading.png" align="middle" width="400px"/>
+        <figcaption>Teapot shading with vertex normals</figcaption>
       </td>
     </tr>
   </table>
@@ -187,27 +185,34 @@
   Briefly explain how you implemented the edge flip operation and describe any interesting implementation / debugging tricks you have used.
 </b>
 <p>
-    account for boundary edge case, define every item of the initial halfedge data structure. then draw the diagram, repoint everything, made sure to implement our items in a specific order so that nothing was changed before it was edited.
-    
-    YOUR RESPONSE GOES HERE
+    We implemented the edge flip operation by first accounting for the case of boundary edges, and then defining every item in the 2-triangle, half-edge data structure. And we had to pay special attention to the order because if an item was assigned too early, it may have downstream impacts on other parts of the data structure. After drawing the flip operation on a diagram by hand, we noted what items had been changed and repointed all appropriate items in our update sections. The flip operation is essentially a swap of some variables and then redefining the neighboring components.
 </p>
 <br>
-
 
 <b>
   Show screenshots of the teapot before and after some edge flips.
 </b>
-<p>
-    YOUR RESPONSE GOES HERE
-</p>
+<div align="middle">
+  <table style="width:100%">
+    <tr align="center">
+      <td>
+        <img src="results/Part4/Part4_beforeFlips.png" align="middle" width="400px"/>
+        <figcaption>Teapot before Flip</figcaption>
+      </td>
+      <td>
+        <img src="results/Part4/Part4_afterFlips.png" align="middle" width="400px"/>
+        <figcaption>Teapot after Flip</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
 <br>
-
 
 <b>
     Write about your eventful debugging journey, if you have experienced one.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+    With task 4, our only eventful debugging was having to review all of our assignments and pointers to make sure that the pointers were pointing to the right thing and that the code was typo free. Sorting out typos fixed our code and produced the correct results.
 </p>
 <br>
 
@@ -217,26 +222,47 @@
   Briefly explain how you implemented the edge split operation and describe any interesting implementation / debugging tricks you have used.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+    We implemeneted the edge split operation by again defining the components of the initial half-edge structure  and then defining and performing a midpoint split of the middle edge. We define new edges, half-edges, vertices, and faces to support the creation of new triangles by the split operation. This new midpoint allows us to redefine the inner edges based on the midpoint vertex and then we assign or reassign each of the triangles' components to either existing elements or newly defined ones. Once we update the halfedges based on the new components, we're done. The split operation creates two new faces, 3 new edges, one new vertex, and 6 new half edges since the split visually makes more triangles.
 </p>
 <br>
-
 
 <b>
     Show screenshots of a mesh before and after some edge splits. 
 </b>
-<p>
-    YOUR RESPONSE GOES HERE
-</p>
+<div align="middle">
+  <table style="width:100%">
+    <tr align="center">
+      <td>
+        <img src="results/Part5/Part5_beforeSplit.png" align="middle" width="400px"/>
+        <figcaption>Teapot before edge splits</figcaption>
+      </td>
+      <td>
+        <img src="results/Part5/Part5_afterSplit.png" align="middle" width="400px"/>
+        <figcaption>Teapot after edge splits</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
 <br>
 
 
 <b>
     Show screenshots of a mesh before and after a combination of both edge splits and edge flips.
 </b>
-<p>
-    YOUR RESPONSE GOES HERE
-</p>
+<div align="middle">
+  <table style="width:100%">
+    <tr align="center">
+      <td>
+        <img src="results/Part5/Part5_beforeSplitAndFlip.png" align="middle" width="400px"/>
+        <figcaption>Teapot before edge splits and edge flips</figcaption>
+      </td>
+      <td>
+        <img src="results/Part5/Part5_afterSplitAndFlip.png" align="middle" width="400px"/>
+        <figcaption>Teapot after edge splits and edge flips</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
 <br>
 
 
@@ -244,12 +270,9 @@
     Write about your eventful debugging journey, if you have experienced one.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
-    debugging averaging, did minus instead of plus oops
-    Debugging task3 because Phong shading wasn't working right once we split and flip some edges, norm not being tracked right and instead calculated area/norm based off cross product of points
+    Our debugging journey involved debugging our averaging function and debugging part 3 to make sure Phong shading works properly. When we initally finished the algorithm, the teapot was splitting but the edge that was split essentially dented into the geometry. This was really weird behavior, and then we realized that midpoint is not (point1 - point2)/2 which just causes at least component of the 3D midpoint to become 0 if the points are similar in one axis. Once we changed it to point1 + point2, the midpoint part matched the proper definition. We also had to debug part 3 because Phong shading wasn't working properly once we split and then flipped the split edge. This was because our initial code based the weighted area off of the norm's norm which when the split edge was flipped, might have been flipping the norm inwards or causing the area to be 0. To address this bug, we redid our "find area" section to be based off the three points of each triangle so that we were taking the cross product of two vectors that define the triangle. This also already weights the normal by the area, so we just need to sum the surrounding edges and normalize the sum.
 </p>
 <br>
-
 
 <b>
     If you have implemented support for boundary edges, show screenshots of your implementation properly handling split operations on boundary edges.
