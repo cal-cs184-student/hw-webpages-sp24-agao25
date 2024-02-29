@@ -46,7 +46,6 @@
 
 <br><br>
 <div>
-
 <h2 align="middle">Overview</h2>
 <p>
     In this homework, we implemented various geometric models to create meshes of 2D curves and 3D objects. This involved the manipulation of interpolation functions/algorithms, triangle meshes and the halfedge data structure, and various functions to smooth or transform the displayed model. The halfedge data structure is really interesting in how it can allow us to traverse through an entire mesh with only a few pointers, but a lot of reassignments. It's also pretty cool to compare how we can manually manipulate the mesh to try to improve the mesh versus using an algorithm to subdivide.
@@ -288,28 +287,102 @@
   Briefly explain how you implemented the loop subdivision and describe any interesting implementation / debugging tricks you have used.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+   We implemented the loop subdivision by first looping through the mesh and reassigning all of the positions in the halfedge data structure for each edge and assigning them as old edges. We did this for the vertices as well, so that we don't have to actively track this information while splitting and flipping. We then wrote the loop that would split and flip all of the individual halfedge data structures to perform the loop subdivision. This loop included conditions that checked whether the edge was not new, and if so, then split it. And then for edge flips, we flip edges where the edge is new, and where one vertex is old and one is new. Then, we reassigned the previously calculated positions of all of the components accordingly. We also had to edit our part 5 code to include true isNew trackers for the midpoint vertex and 3 edges we created during the split operation. Debugging wise, we had to set breakpoints and identify where the algorithm was infinitely looping. Then, we could step in and resolve issues in the code. We also had to make sure we were assigning isTrue trackers when new edges and vertices were made, and ensure that the conditions we had set were correct. 
 </p>
 <br>
-
 
 <b>
   Take some notes, as well as some screenshots, of your observations on how meshes behave after loop subdivision. What happens to sharp corners and edges? Can you reduce this effect by pre-splitting some edges?
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+    After loop subdivision, sharp corners and edges generally get smoothed out. This is noticeable in how the intial torus dae file and initial icosahedron dae file have corners and edges that get smoother after loop suvdivision. Collapsing an edge or pre-splitting the edge we want to keep sharp seems to reduce this effect a little and preserve some resemblance of a sharp peak/corner even after some loop subdivision. In the Torus after edge split file, we can see a little cusp from a pre-split edge.
 </p>
+    
+    </b>
+    <div align="middle">
+      <table style="width:100%">
+        <tr align="center">
+          <td>
+            <img src="results/Part6/Torus_BeforeLS" align="middle" width="400px"/>
+            <figcaption>Torus.dae before loop subdivision</figcaption>
+          </td>
+          <td>
+            <img src="results/Part6/Torus_AfterLS" align="middle" width="400px"/>
+            <figcaption>Torus.dae before loop subdivision</figcaption>
+          </td>
+        </tr>
+        <br>
+        <tr align="center">
+          <td>
+            <img src="results/Part6/Torus_EdgeSplit" align="middle" width="400px"/>
+            <figcaption>Torus.dae with pre-split edge</figcaption>
+          </td>
+          <td>
+            <img src="results/Part6/Torus_AfterEdgeSplit" align="middle" width="400px"/>
+            <figcaption>Torus.dae after loop subdivision with pre-split edge</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <br>
 <br>
-
 
 <b>
   Load dae/cube.dae. Perform several iterations of loop subdivision on the cube. Notice that the cube becomes slightly asymmetric after repeated subdivisions. Can you pre-process the cube with edge flips and splits so that the cube subdivides symmetrically? Document these effects and explain why they occur. Also explain how your pre-processing helps alleviate the effects.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+    If we pre-process the cube by splitting each face's crossing edge into four faces from two faces, the subdivision is more equally spread out through the faces of the cube and symmetry is better preserved. Edge flips will end up just flipping the asymmetry and will not help the cube symmetrically subdivide. Random edge splits also will not help and if anything, just exaggerates the asymmetry of sections of the cube. Our pre-processing helps alleviate the effects by preparing a cube that is initially more symmetrical since the crossing edges are really diagonals that if not pre-processed, just got exaggerated in the loop subdivision. Splitting each face into an "X" essentially makes each face's edge contributions more even and when we loop subdivide, we can allevivate the asymmetrical effects.
 </p>
+    
+    <div align="middle">
+      <table style="width:100%">
+        <tr align="center">
+          <td>
+            <img src="results/Part6/Cube_NoOperation.png" align="middle" width="400px"/>
+            <figcaption>Input cube with no pre-processing</figcaption>
+          </td>
+          <td>
+            <img src="results/Part6/Cube_LoopSubdivision.png" align="middle" width="400px"/>
+            <figcaption>Input cube with no pre-processing after loop subdivision</figcaption>
+          </td>
+        </tr>
+        <br>
+        <tr align="center">
+          <td>
+            <img src="results/Part6/Cube_FlippedEdges.png" align="middle" width="400px"/>
+            <figcaption>Input cube with flipped edges</figcaption>
+          </td>
+          <td>
+            <img src="results/Part6/Cube_AfterFlippedEdges.png" align="middle" width="400px"/>
+            <figcaption>Input cube with flipped edges after loop subdivision</figcaption>
+          </td>
+        </tr>
+        <br>
+        <tr align="center">
+          <td>
+            <img src="results/Part6/Cube_RandomEdgeSplits" align="middle" width="400px"/>
+            <figcaption>Input cube with random edge splits</figcaption>
+          </td>
+          <td>
+            <img src="results/Part6/Cube_AfterRandomEdgeSplits" align="middle" width="400px"/>
+            <figcaption>Input cube with random edge splits after loop subdivision</figcaption>
+          </td>
+        </tr>
+        <br>
+        <tr align="center">
+          <td>
+            <img src="results/Part6/Cube_XPre.png" align="middle" width="400px"/>
+            <figcaption>Input cube with each face's crossing edge split</figcaption>
+          </td>
+          <td>
+            <img src="results/Part6/Cube_AfterXPre.png" align="middle" width="400px"/>
+            <figcaption>Input cube with crossing edge pre-processing after loop subdivision</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <br>
 <br>
-
 
 <b>
     If you have implemented any extra credit extensions, explain what you did and document how they work with screenshots.
