@@ -155,7 +155,7 @@
   Briefly explain how you implemented the area-weighted vertex normals.
 </b>
 <p>
-    We implemented area-weighted vertex normals by first calling out the initial halfedge and defining an empty Vector3D to store the weighted normal vectors. Then, we use a do/while loop to iterate through all of the faces that contain the given vertex, weight each face's normal vector components with the face's area, and sum up each of the weighted normals. The normalization of this summed vector gives us the vector to be used in Phong shading.
+    We implemented area-weighted vertex normals by first calling out the initial halfedge and defining an empty Vector3D to store the weighted normal vectors. Then, we use a do/while loop to iterate through all of the faces via halfedges that contain the given vertex. For each face, we found the three vertice positions and defined two edges from these vertices. Then, we took the cross-product of the two edges which gave us the area-weighted normal. Each of these normals was then summed into the empty Vector3D before the summed vector was normalized. This normalized summed vector gives us the vector to be used in Phong shading.
 </p>
 <br>
 
@@ -184,7 +184,7 @@
   Briefly explain how you implemented the edge flip operation and describe any interesting implementation / debugging tricks you have used.
 </b>
 <p>
-    We implemented the edge flip operation by first accounting for the case of boundary edges, and then defining every item in the 2-triangle, half-edge data structure. And we had to pay special attention to the order because if an item was assigned too early, it may have downstream impacts on other parts of the data structure. After drawing the flip operation on a diagram by hand, we noted what items had been changed and repointed all appropriate items in our update sections. The flip operation is essentially a swap of some variables and then redefining the neighboring components.
+    We implemented the edge flip operation by first accounting for the case of boundary edges, and then defining every item in the 2-triangle, half-edge data structure. We had to pay special attention to the order because if an item was assigned too early, it may have downstream impacts on other parts of the data structure. After drawing the flip operation on a diagram by hand, we noted what items had been changed and repointed all appropriate items in our update sections. The flip operation is essentially a swap of some variables and then redefining the neighboring components.
 </p>
 <br>
 
@@ -211,7 +211,7 @@
     Write about your eventful debugging journey, if you have experienced one.
 </b>
 <p>
-    With task 4, our only eventful debugging was having to review all of our assignments and pointers to make sure that the pointers were pointing to the right thing and that the code was typo free. Sorting out typos fixed our code and produced the correct results.
+    With task 4, our only eventful debugging was having to review all of our assignments and pointers to make sure that the pointers were pointing to the right thing and that the code was typo free. We also drew out the triangles in the halfedge data structure and labeled all the edges, vertices, etc. to double check that our code was doing the right reassignments. Sorting out typos fixed our code and produced the correct results.
 </p>
 <br>
 
@@ -221,7 +221,7 @@
   Briefly explain how you implemented the edge split operation and describe any interesting implementation / debugging tricks you have used.
 </b>
 <p>
-    We implemeneted the edge split operation by again defining the components of the initial half-edge structure  and then defining and performing a midpoint split of the middle edge. We define new edges, half-edges, vertices, and faces to support the creation of new triangles by the split operation. This new midpoint allows us to redefine the inner edges based on the midpoint vertex and then we assign or reassign each of the triangles' components to either existing elements or newly defined ones. Once we update the halfedges based on the new components, we're done. The split operation creates two new faces, 3 new edges, one new vertex, and 6 new half edges since the split visually makes more triangles.
+    We implemented the edge split operation by again defining the components of the initial half-edge structure and then defining and performing a midpoint split of the middle edge. This new midpoint allows us to redefine the inner edges based on the midpoint vertex and then we assign or reassign each of the triangles' components to either existing elements or newly defined ones. We define new edges, half-edges, vertices, and faces to support the creation of new triangles by the split operation. Drawing out the halfedge data structures before and after the operation helped us to visualize all the changes. Once we update the halfedges based on the new components, we're done. The split operation creates two new faces, 3 new edges, one new vertex, and 6 new half edges since the split visually makes more triangles.
 </p>
 <br>
 
@@ -269,7 +269,7 @@
     Write about your eventful debugging journey, if you have experienced one.
 </b>
 <p>
-    Our debugging journey involved debugging our averaging function and debugging part 3 to make sure Phong shading works properly. When we initally finished the algorithm, the teapot was splitting but the edge that was split essentially dented into the geometry. This was really weird behavior, and then we realized that midpoint is not (point1 - point2)/2 which just causes at least component of the 3D midpoint to become 0 if the points are similar in one axis. Once we changed it to point1 + point2, the midpoint part matched the proper definition. We also had to debug part 3 because Phong shading wasn't working properly once we split and then flipped the split edge. This was because our initial code based the weighted area off of the norm's norm which when the split edge was flipped, might have been flipping the norm inwards or causing the area to be 0. To address this bug, we redid our "find area" section to be based off the three points of each triangle so that we were taking the cross product of two vectors that define the triangle. This also already weights the normal by the area, so we just need to sum the surrounding edges and normalize the sum.
+Our debugging journey involved debugging our averaging function and debugging part 3 to make sure Phong shading works properly. When we initially finished the algorithm, the teapot was splitting but the edge that was split essentially dented into the geometry. This was really weird behavior, and then we realized that the midpoint is not (point1 - point2)/2 which just causes at least one component of the 3D midpoint to become 0 if the points are similar in one axis. Once we changed it to point1 + point2, the midpoint part matched the proper definition. We also had to debug part 3 because Phong shading wasn't working properly once we split and then flipped the split edge. This was because our initial code based the weighted area off of the norm's norm which when the split edge was flipped, might have been flipping the norm inwards or causing the area to be 0. To address this bug, we redid our "find area" section to be based on the three points of each triangle so that we were taking the cross product of two vectors that define the triangle. This also already weights the normal by the area, so we just need to sum the surrounding edges and normalize the sum. We also had to revisit our triangle diagrams and the component labeling to double-check that the old triangle and new triangles' components were properly assigned.
 </p>
 <br>
 
@@ -287,7 +287,7 @@
   Briefly explain how you implemented the loop subdivision and describe any interesting implementation / debugging tricks you have used.
 </b>
 <p>
-   We implemented the loop subdivision by first looping through the mesh and reassigning all of the positions in the halfedge data structure for each edge and assigning them as old edges. We did this for the vertices as well, so that we don't have to actively track this information while splitting and flipping. We then wrote the loop that would split and flip all of the individual halfedge data structures to perform the loop subdivision. This loop included conditions that checked whether the edge was not new, and if so, then split it. And then for edge flips, we flip edges where the edge is new, and where one vertex is old and one is new. Then, we reassigned the previously calculated positions of all of the components accordingly. We also had to edit our part 5 code to include true isNew trackers for the midpoint vertex and 3 edges we created during the split operation. Debugging wise, we had to set breakpoints and identify where the algorithm was infinitely looping. Then, we could step in and resolve issues in the code. We also had to make sure we were assigning isTrue trackers when new edges and vertices were made, and ensure that the conditions we had set were correct. 
+   We implemented the loop subdivision by first looping through the mesh and reassigning all of the positions in the halfedge data structure for each edge and assigning them as old edges. We did this for the vertices as well, so that we don't have to actively track this information while splitting and flipping. We then wrote the loop that would split and flip all of the individual halfedge data structures to perform the loop subdivision. This loop included conditions that checked whether the edge was not new, and if so, then split it. And then for edge flips, we flip edges where the edge is new, and where one vertex is old and one is new. Then, we reassigned the previously calculated positions of all of the components accordingly. We also had to edit our part 5 code to include true isNew trackers for the midpoint vertex and 3 edges we created during the split operation. As for debugging, we had to set breakpoints and identify where the algorithm was infinitely looping. Then, we could step in and resolve issues in the code. We also had to make sure we were assigning isTrue trackers when new edges and vertices were made, and ensure that the conditions we had set were correct. Drawing out the triangle and halfedge data structure diagrams helped us debug the various vertices and edges and check whether it was new or old, being split or flipped, and if we were applying the right conditions and steps in our algorithm.
 </p>
 <br>
 
@@ -295,7 +295,7 @@
   Take some notes, as well as some screenshots, of your observations on how meshes behave after loop subdivision. What happens to sharp corners and edges? Can you reduce this effect by pre-splitting some edges?
 </b>
 <p>
-    After loop subdivision, sharp corners and edges generally get smoothed out. This is noticeable in how the intial torus dae file and initial icosahedron dae file have corners and edges that get smoother after loop suvdivision. Collapsing an edge or pre-splitting the edge we want to keep sharp seems to reduce this effect a little and preserve some resemblance of a sharp peak/corner even after some loop subdivision. In the Torus after edge split file, we can see a little cusp from a pre-split edge.
+After loop subdivision, sharp corners and edges generally get smoothed out. This is noticeable in how the initial torus dae file and initial icosahedron dae file have corners and edges that get smoother after loop subdivision. Collapsing an edge or pre-splitting the edge we want to keep sharp seems to reduce this effect a little and preserve some resemblance of a sharp peak/corner even after some loop subdivision. In the Torus after edge split file, we can see a little cusp from a pre-split edge.
 </p>
     
     </b>
@@ -331,7 +331,7 @@
   Load dae/cube.dae. Perform several iterations of loop subdivision on the cube. Notice that the cube becomes slightly asymmetric after repeated subdivisions. Can you pre-process the cube with edge flips and splits so that the cube subdivides symmetrically? Document these effects and explain why they occur. Also explain how your pre-processing helps alleviate the effects.
 </b>
 <p>
-    If we pre-process the cube by splitting each face's crossing edge into four faces from two faces, the subdivision is more equally spread out through the faces of the cube and symmetry is better preserved. Edge flips will end up just flipping the asymmetry and will not help the cube symmetrically subdivide. Random edge splits also will not help and if anything, just exaggerates the asymmetry of sections of the cube. Our pre-processing helps alleviate the effects by preparing a cube that is initially more symmetrical since the crossing edges are really diagonals that if not pre-processed, just got exaggerated in the loop subdivision. Splitting each face into an "X" essentially makes each face's edge contributions more even and when we loop subdivide, we can allevivate the asymmetrical effects.
+If we pre-process the cube by splitting each face's crossing edge into four faces from two faces, the subdivision is more equally spread out through the faces of the cube and symmetry is better preserved. Edge flips will end up just flipping the asymmetry and will not help the cube symmetrically subdivide. Random edge splits also will not help and if anything, just exaggerate the asymmetry of sections of the cube. Our pre-processing helps alleviate the effects by preparing a cube that is initially more symmetrical since the crossing edges are really diagonals that if not pre-processed, just got exaggerated in the loop subdivision. Splitting each face into an "X" essentially makes each face's edge contributions more even and when we loop subdivide, we can alleviate the asymmetrical effects.
 </p>
     
     <div align="middle">
